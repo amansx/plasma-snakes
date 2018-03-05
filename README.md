@@ -7,3 +7,4 @@
 ### Supports 1 powerup (slows down the snake for 2 turns)
 ### Supports BGM Audio
 
+[http://anixir.com/plasma-snakes/]
