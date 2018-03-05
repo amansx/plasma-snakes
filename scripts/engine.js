@@ -1,14 +1,20 @@
+/*
+* Author: Aman Singh
+* Target: Squarespace | Plasma Snakes
+*/
 
+// Define Player Direction Constants
 const DIRECTION_LEFT  = 1;
 const DIRECTION_RIGHT = 2;
 const DIRECTION_UP    = 3;
 const DIRECTION_DOWN  = 4;
 
-
 const getrand = (minimum, maximum) => {
 	return Math.floor(Math.random() * (maximum - minimum + 1)) + minimum;	
 };
 
+// Define the player class and assign defaults
+// Feed 3 blocks to the snake so it's easier to visualize
 class Player{
 	constructor(){
 		this._direction    = { x: 1, y: 0 };
@@ -18,6 +24,7 @@ class Player{
 		this._height       = 3;
 	}
 
+	// Change player direction
 	face(direction) {
 		switch(direction){
 			case DIRECTION_LEFT  : this._direction = { x:  0, y: -1 }; break;
@@ -27,6 +34,7 @@ class Player{
 		}
 	}
 	
+	// Getters and setters
 	get head()        { return this._head;     }
 	get skeleton()    { return this._skeleton; }
 	get lHeight()     { return this._lHeight;  }
@@ -40,6 +48,7 @@ class Player{
 
 }
 
+// Define Board class and powerup location
 class GameBoard {
 	constructor( width = 20, height = 40 ){
 		this.width  =  width;
@@ -52,6 +61,7 @@ class GameBoard {
 }
 
 
+// Define Game Engine with support for multiple rendering engines
 class GameEngine {
 	
 	constructor(player, board, renderer){
@@ -67,15 +77,20 @@ class GameEngine {
 		this._powerUPCallback = () => {};
 	}
 
+	// if player got a powerup
 	get fastStep(){ return this._fastStep; }
 	get isPowerUP(){ return this._powup; }
 
+	// Accept callback registration for Renderer Specific implmentations
+	// when snake feeds
 	attachPowerUPCallback(cback){
 		if( typeof cback == 'function'){
 			this._powerUPCallback = cback;
 		}
 	}
 
+	// Generate power up and 
+	// a random location to drop it
 	dropPowerup() {
 		
 		if(++this._powupGreen > 1) {
@@ -100,6 +115,7 @@ class GameEngine {
 		this._board.powerupCoords = getCoords();
 	};
 
+	// Check if snake doesn't touch itself, nor the bounds 
 	_checkBounds(head){
 		const pos   = head.x + "," + head.y;
 		const index = this._player.skeleton.indexOf(pos);
@@ -108,10 +124,12 @@ class GameEngine {
 		if( index > -1 && index < this._player.skeleton.length ){ return true; }
 	};
 
+	// Create genesis snake feed
 	init(){
 		this.dropPowerup();
 	}
 
+	// Gameengine Step 
 	step() {
 		let append = false;
 
@@ -150,8 +168,13 @@ let rendererA, rendererB;
 let lastfastStepVal, interval;
 const gamestep = ()=>{
 	
+	// if game is paused stop processing
 	if(engine.paused){ return; }else{
+
+		// Run the engine step
 		engine.step(); 
+
+		// Load all requested renderers
 		if(rendererA){ rendererA.render(); }
 		if(rendererB){ rendererB.render(); }
 	}
@@ -169,6 +192,8 @@ const gamestep = ()=>{
 
 };
 
+
+// Multiple renderers
 function loadascii(){
 	rendererA  = new RendererAscii(board, engine, player);
 	rendererA.init();

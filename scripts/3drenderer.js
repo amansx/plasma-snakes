@@ -1,3 +1,9 @@
+/*
+* Author: Aman Singh
+* Target: Squarespace | Plasma Snakes
+*/
+
+// A Bunch of Random Colors
 const color1 = new BABYLON.Color3(1,1,0);
 const color2 = new BABYLON.Color3(0,0,1);
 const color3 = new BABYLON.Color3(1,0,1);
@@ -5,17 +11,27 @@ const color4 = new BABYLON.Color3(0.2, 0.2, 0.2);
 const color5 = new BABYLON.Color3(0,0,1);
 const color6 = new BABYLON.Color3(0.9,0.2,0);
 
+// Define Block Height Ratio 3d to standard def
 const BlockHeight = 0.25;
+
+// Define Renderer Class
 class Renderer3D{
 
 	constructor(player, board, engine){
 		this._engine = engine;
 		this.board   = board;
-		this.player  = player;		
+		this.player  = player;	
 	}
 
+	// CreateBlock Gets triggered on every render step
+	// and applies material to the pre-rendered blocks
+	// Blocks are not created everytime and are 
+	// pushed out of the view to avoid object creation
 	createBlock(x, y, power) {
+
+		// Make the blocks stay in bounds
 		this.allblocks[x][y].position.y = BlockHeight/2;
+		
 		if(this._engine.gameover){
 			this.textpanel.text = "GAMEOVER! Your Score: " + this.player.height;
 			this.bgm.stop();
@@ -160,6 +176,12 @@ class Renderer3D{
 			self.bgm.play();
 			advancedTexture.removeControl(startButton);
 		});
+
+
+		// Play sound when Snake feeds
+		this._engine.attachPowerUPCallback(()=>{
+			this.feedmusic.play();
+		})
 
 	    let advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
 	    advancedTexture.addControl(textPanel);
